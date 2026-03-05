@@ -1,0 +1,17 @@
+name: Docker CI  # Nome do robô
+
+on:
+  push:
+    branches: [ "main", "feat/*" ] # Roda na main e em qualquer branch que comece com feat/
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # O GitHub vai ligar um Linux para você na nuvem
+
+    steps:
+    - uses: actions/checkout@v4 # Passo 1: Baixar seu código na máquina do GitHub
+
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag meu-app-ci:$(date +%s) # Passo 2: Testar se o seu Dockerfile constrói sem erros
