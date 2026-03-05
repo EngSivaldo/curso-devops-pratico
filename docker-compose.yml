@@ -1,6 +1,23 @@
 services:
-  meu-app:
+  app:
     build: .
     container_name: meu-app-devops
     ports:
       - "8080:5000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/loja
+
+  db:
+    image: postgres:15
+    container_name: meu-banco-dados
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=loja
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
