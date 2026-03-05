@@ -1,4 +1,6 @@
 services:
-  app:
+  meu-app:
     build: .
     container_name: meu-app-devops
+    ports:
+      - "8080:5000"

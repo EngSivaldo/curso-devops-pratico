@@ -1,3 +1,6 @@
 FROM python:3.9-slim
 WORKDIR /app
-CMD ["python", "--version"]
+RUN pip install flask
+COPY src/ /app/
+EXPOSE 5000
+CMD ["python", "app.py"]
