@@ -3,43 +3,44 @@ import psycopg2
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
-
-# Conexão com o Banco de Dados usando a URL do docker-compose
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL)
-    return conn
-
-# Criar a tabela de vendas se ela não existir
-def init_db():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('CREATE TABLE IF NOT EXISTS vendas (id serial PRIMARY KEY, produto varchar(100), data_venda timestamp DEFAULT CURRENT_TIMESTAMP);')
-    conn.commit()
-    cur.close()
-    conn.close()
+    return psycopg2.connect(DATABASE_URL)
 
 @app.route("/")
 def index():
-    init_db()
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT COUNT(*) FROM vendas;')
     total = cur.fetchone()[0]
     cur.close()
     conn.close()
-    return render_template("index.html", mensagem=f"Total de vendas no banco: {total}")
+    return render_template("index.html", mensagem=f"Total de vendas: {total}")
 
 @app.route("/comprar", methods=["POST"])
 def comprar():
+    nome_cliente = request.form.get('nome_cliente') # Pega o nome do formulário
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('INSERT INTO vendas (produto) VALUES (%s)', ('Camiseta DevOps',))
+    # Agora inserimos o produto E o cliente
+    cur.execute('INSERT INTO vendas (produto, cliente) VALUES (%s, %s)', 
+                ('Camiseta DevOps', nome_cliente))
     conn.commit()
     cur.close()
     conn.close()
-    return render_template("index.html", mensagem="✅ Venda salva no Banco de Dados!")
+    return render_template("index.html", mensagem=f"✅ Venda para {nome_cliente} salva!")
+
+@app.route("/relatorio")
+def relatorio():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    # Busca todas as vendas, da mais recente para a mais antiga
+    cur.execute('SELECT id, produto, data_venda, cliente FROM vendas ORDER BY id DESC;')
+    vendas_db = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template("relatorio.html", vendas=vendas_db)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
