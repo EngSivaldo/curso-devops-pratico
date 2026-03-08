@@ -1,7 +1,10 @@
 import os
 from flask import Flask
+from prometheus_flask_exporter import PrometheusMetrics
 import psycopg2
 
+
+metrics = PrometheusMetrics.for_app_factory() # Prepara para o padrão Factory
 def create_app():
     app = Flask(__name__)
     
@@ -10,6 +13,7 @@ def create_app():
 
     from . import routes
     app.register_blueprint(routes.bp)
+    metrics.init_app(app) # Inicializa as métricas aqui!
 
     return app
 
