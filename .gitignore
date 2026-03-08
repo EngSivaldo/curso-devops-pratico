@@ -1,0 +1,26 @@
+.env
+
+# Python (Arquivos de cache e compilados)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Ambientes Virtuais (Nunca envie a pasta venv para o Git)
+venv/
+env/
+.venv/
+
+# Django (Arquivos específicos)
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Logs e IDEs
+*.log
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
