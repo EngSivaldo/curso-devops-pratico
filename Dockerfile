@@ -5,4 +5,4 @@ WORKDIR /app
 RUN pip install flask psycopg2-binary
 COPY src/ /app/
 EXPOSE 5000
-CMD ["python", "app.py"]
+CMD ["python", "wsgi.py"]
